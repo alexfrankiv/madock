@@ -84,7 +84,23 @@ EOF
 # Help message with tips
 showHelp()
 {
-  echo Usage: bash madock.sh \<option\> \<folder_path\> \[port_to forward_for_tomcat\] \[port_to_forward_for postgres\]
+  read -d '' helpDoc <<-EOF
+Usage: bash madock.sh \<option\> \<folder_path\> \[port_to_publish_for_tomcat\] \[port_to_publish_for postgres\]
+Available oprions are:
+-s / -simple -- dockerize project as jar
+-sNM / -simpleNM -- simple + no maven clean install
+-sNR / -simpleNR -- simpleNM + no rebuild/repackaging
+
+-b / -basic -- dockerize web application with Tomcat 8
+-bNM / -basicNM -- basic + no maven clean install
+-bNR / -basicNR -- basicNM + no rebuild/repackaging
+
+-c / -compose -- dockerize compose web application with Tomcat 8 and PostgreSQL 9.4 
+-cNF / -composeNF -- compose + no composefile rewriting
+-cNM / -composeNM -- composeNF + no maven clean install
+-cNR / -composeNR -- composeNM + no rebuild/repackaging
+EOF
+  echo "$helpDoc"
 }
 # Maven cleaning, installing & packaging without maven itself!
 mavenCleanInstall()
@@ -113,16 +129,16 @@ else
   [[ -z $3 ]] && server_port=8080 || server_port=$3
   [[ -z $4 ]] && db_port=5432 || db_port=$4
   case $1 in
-    -s | simple) simpleBasicDockerizing s;;
-    -sNM | simpleNM) simpleBasicDockerizing s no-maven-ci;;
-    -sNR | simpleNR) simpleBasicDockerizing s no-rebuild;;
-    -b | basic) simpleBasicDockerizing b;;
-    -bNM | basicNM) simpleBasicDockerizing b no-maven-ci;;
-    -bNR | basicNR) simpleBasicDockerizing b no-rebuild;;
-    -c | compose) composeDockerizing;; 
-    -cNF | composeNF) composeDockerizing no-file-rebuild;;
-    -cNM | composeNM) composeDockerizing no-maven-ci;;
-    -cNR | composeNR) composeDockerizing no-rebuild;;
+    -s | -simple) simpleBasicDockerizing s;;
+    -sNM | -simpleNM) simpleBasicDockerizing s no-maven-ci;;
+    -sNR | -simpleNR) simpleBasicDockerizing s no-rebuild;;
+    -b | -basic) simpleBasicDockerizing b;;
+    -bNM | -basicNM) simpleBasicDockerizing b no-maven-ci;;
+    -bNR | -basicNR) simpleBasicDockerizing b no-rebuild;;
+    -c | -compose) composeDockerizing;; 
+    -cNF | -composeNF) composeDockerizing no-file-rebuild;;
+    -cNM | -composeNM) composeDockerizing no-maven-ci;;
+    -cNR | -composeNR) composeDockerizing no-rebuild;;
     *) showHelp
   esac
 fi
